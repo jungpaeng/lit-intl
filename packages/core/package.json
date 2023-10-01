@@ -2,7 +2,22 @@
   "name": "@lit-intl/core",
   "version": "0.0.2",
   "sideEffects": false,
-  "main": "index.js",
+  "type": "module",
+  "main": "./dist/index.min.cjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.min.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.min.cjs"
+      }
+    }
+  },
   "repository": "https://github.com/jungpaeng/lit-intl.git",
   "author": "jungpaeng",
   "license": "MIT",
@@ -13,6 +28,17 @@
   "publishConfig": {
     "access": "public"
   },
+  "keywords": [
+    "react",
+    "intl",
+    "i18n",
+    "internationalization",
+    "localization",
+    "translate",
+    "translation",
+    "format",
+    "formatting"
+  ],
   "scripts": {
     "clean": "rimraf dist",
     "build": "yarn test && yarn clean && yarn build:js && yarn build:dts",
