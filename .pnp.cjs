@@ -4495,6 +4495,19 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["local-pkg", "npm:0.4.3"]\
           ],\
+          "linkType": "SOFT"\
+        }],\
+        ["virtual:fe89c83dda1fd84138ed29d22bf20d389ddc38a625897f3463caa3a8fe3a602a2a8bc936f11be980a1158f2e1545455256900dc4820b7ec2190bb50fe14a7f01#npm:0.4.3", {\
+          "packageLocation": "./.yarn/__virtual__/local-pkg-virtual-ffde5d333c/0/cache/local-pkg-npm-0.4.3-de61dda1fd-7825aca531.zip/node_modules/local-pkg/",\
+          "packageDependencies": [\
+            ["local-pkg", "virtual:fe89c83dda1fd84138ed29d22bf20d389ddc38a625897f3463caa3a8fe3a602a2a8bc936f11be980a1158f2e1545455256900dc4820b7ec2190bb50fe14a7f01#npm:0.4.3"],\
+            ["@types/jsdom", null],\
+            ["jsdom", "virtual:2cfb48767f1c50dbf748d0337b42d4c8c9a457f4cec509d80ae7b8b82b6ee1bc07a8585b354f61fc908a906c429f32f0018c4b03a66d82aec3e34f8d4024d091#npm:22.1.0"]\
+          ],\
+          "packagePeers": [\
+            "@types/jsdom",\
+            "jsdom"\
+          ],\
           "linkType": "HARD"\
         }]\
       ]],\
@@ -7081,7 +7094,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["debug", "virtual:feb0771c9f8eadaf509cfed41e14a8bebbea5442233275c1c87085111077a08ef71eb773b899665b154d8203a55a489610a54117ae059fce5f5b8b844493b1b1#npm:4.3.4"],\
             ["happy-dom", null],\
             ["jsdom", "virtual:2cfb48767f1c50dbf748d0337b42d4c8c9a457f4cec509d80ae7b8b82b6ee1bc07a8585b354f61fc908a906c429f32f0018c4b03a66d82aec3e34f8d4024d091#npm:22.1.0"],\
-            ["local-pkg", "npm:0.4.3"],\
+            ["local-pkg", "virtual:fe89c83dda1fd84138ed29d22bf20d389ddc38a625897f3463caa3a8fe3a602a2a8bc936f11be980a1158f2e1545455256900dc4820b7ec2190bb50fe14a7f01#npm:0.4.3"],\
             ["magic-string", "npm:0.30.4"],\
             ["pathe", "npm:1.1.1"],\
             ["picocolors", "npm:1.0.0"],\
