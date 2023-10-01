@@ -2,7 +2,7 @@ import React from 'react';
 
 import IntlMessageFormat, { type Formats } from 'intl-messageformat';
 
-import { useIntlContext } from './lit-intl.provider';
+import { useIntlContext } from './intl.provider';
 import { type IntlMessage } from './types/intl-message';
 import { type TranslationValue } from './types/translation';
 

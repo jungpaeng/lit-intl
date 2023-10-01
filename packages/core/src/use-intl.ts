@@ -1,4 +1,4 @@
-import { useIntlContext } from './lit-intl.provider';
+import { useIntlContext } from './intl.provider';
 
 const MINUTE = 60;
 const HOUR = MINUTE * 60;

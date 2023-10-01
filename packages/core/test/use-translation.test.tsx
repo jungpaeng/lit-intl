@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { type Formats } from 'intl-messageformat';
 import { describe, expect, it } from 'vitest';
 
-import { LitIntlProvider } from '../src/lit-intl.provider';
+import { IntlProvider } from '../src/intl.provider';
 import { type TranslationValue } from '../src/types/translation';
 import { useTranslation } from '../src/use-translation';
 
@@ -13,9 +13,9 @@ function renderMessage(message: string, values?: TranslationValue, format?: Part
   }
 
   return render(
-    <LitIntlProvider message={{ message }}>
+    <IntlProvider message={{ message }}>
       <Component />
-    </LitIntlProvider>,
+    </IntlProvider>,
   );
 }
 

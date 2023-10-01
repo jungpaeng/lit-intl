@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it } from 'vitest';
 
-import { LitIntlProvider } from '../src/lit-intl.provider';
+import { IntlProvider } from '../src/intl.provider';
 import { useIntl } from '../src/use-intl';
 
 describe('formatDate', () => {
@@ -14,9 +14,9 @@ describe('formatDate', () => {
     }
 
     render(
-      <LitIntlProvider message={{}}>
+      <IntlProvider message={{}}>
         <Component />
-      </LitIntlProvider>,
+      </IntlProvider>,
     );
   }
 
@@ -44,9 +44,9 @@ describe('formatNumber', () => {
     }
 
     render(
-      <LitIntlProvider message={{}}>
+      <IntlProvider message={{}}>
         <Component />
-      </LitIntlProvider>,
+      </IntlProvider>,
     );
   }
 
@@ -69,9 +69,9 @@ describe('formatRelativeTime', () => {
     }
 
     render(
-      <LitIntlProvider message={{}}>
+      <IntlProvider message={{}}>
         <Component />
-      </LitIntlProvider>,
+      </IntlProvider>,
     );
   }
 
