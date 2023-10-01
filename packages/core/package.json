@@ -1,6 +1,6 @@
 {
   "name": "@lit-intl/core",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "sideEffects": false,
   "main": "index.js",
   "repository": "https://github.com/jungpaeng/lit-intl.git",
