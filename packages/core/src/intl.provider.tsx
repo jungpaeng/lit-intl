@@ -34,7 +34,11 @@ export function useIntlContext() {
   const context = React.useContext(IntlContext);
 
   if (context == null) {
-    throw new Error();
+    throw new Error(
+      process.env.NODE_ENV !== 'production'
+        ? "[useIntlContext] Can't be called without an IntlProvider."
+        : undefined,
+    );
   }
 
   return context;
