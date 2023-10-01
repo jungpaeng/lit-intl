@@ -1,0 +1,36 @@
+{
+  "name": "@lit-intl/core",
+  "version": "0.0.1",
+  "main": "index.js",
+  "repository": "https://github.com/jungpaeng/lit-intl.git",
+  "author": "jungpaeng",
+  "license": "MIT",
+  "packageManager": "yarn@3.6.3",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "clean": "rimraf dist",
+    "build": "yarn clean && yarn build:js && yarn build:dts",
+    "build:dts": "tsc -p tsconfig.build.json --emitDeclarationOnly",
+    "build:js": "node esbuild.config.cjs",
+    "test": "yarn vitest"
+  },
+  "dependencies": {
+    "intl-messageformat": "^10.5.3"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^14.0.0",
+    "@types/react": "^18.2.23",
+    "esbuild": "^0.19.4",
+    "esbuild-node-externals": "^1.9.0",
+    "jsdom": "^22.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "rimraf": "^5.0.5",
+    "vitest": "^0.34.6"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0"
+  }
+}

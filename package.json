@@ -1,29 +1,22 @@
 {
   "name": "lit-intl",
-  "version": "0.0.1",
+  "private": true,
   "main": "index.js",
   "repository": "https://github.com/jungpaeng/lit-intl.git",
   "author": "jungpaeng",
   "license": "MIT",
   "packageManager": "yarn@3.6.3",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "clean": "rimraf dist",
-    "build": "yarn clean && yarn build:js && yarn build:dts",
-    "build:dts": "tsc --emitDeclarationOnly",
-    "build:js": "node esbuild.config.cjs",
-    "test": "yarn vitest"
-  },
-  "dependencies": {
-    "intl-messageformat": "^10.5.3"
+    "build:package": "yarn turbo build"
   },
   "devDependencies": {
     "@changesets/cli": "^2.26.2",
-    "@testing-library/react": "^14.0.0",
     "@types/react": "^18.2.23",
     "@typescript-eslint/eslint-plugin": "^6.7.3",
     "@typescript-eslint/parser": "^6.7.3",
-    "esbuild": "^0.19.4",
-    "esbuild-node-externals": "^1.9.0",
     "eslint": "^8.50.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-import": "^2.28.1",
@@ -31,15 +24,8 @@
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-unused-imports": "^3.0.0",
-    "jsdom": "^22.1.0",
     "prettier": "^3.0.3",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "rimraf": "^5.0.5",
-    "typescript": "^5.2.2",
-    "vitest": "^0.34.6"
-  },
-  "peerDependencies": {
-    "react": "^18.0.0"
+    "turbo": "^1.10.14",
+    "typescript": "^5.2.2"
   }
 }

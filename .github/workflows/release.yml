@@ -14,7 +14,7 @@ jobs:
       - name: Install Unplugged Packages
         run: yarn install --immutable --immutable-cache
       - name: Package Build
-        run: yarn build
+        run: yarn build:package
       - name: Package Release
         id: changesets
         uses: cometkim/yarn-changeset-action@v1
