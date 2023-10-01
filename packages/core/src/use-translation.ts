@@ -1,6 +1,6 @@
 import React from 'react';
 
-import IntlMessageFormat from 'intl-messageformat';
+import IntlMessageFormat, { type Formats } from 'intl-messageformat';
 
 import { LitIntlContext } from './lit-intl.context';
 import { type IntlMessage } from './types/intl-message';
@@ -69,7 +69,7 @@ export function useTranslation(path?: string) {
     throw new Error();
   }
 
-  return (idPath: string, value?: TranslationValue) => {
+  return (idPath: string, value?: TranslationValue, format?: Partial<Formats>) => {
     const cachedFormatByLocale = cachedFormatByLocaleRef.current;
 
     let messageFormat: IntlMessageFormat;
@@ -82,7 +82,7 @@ export function useTranslation(path?: string) {
         throw new Error();
       }
 
-      messageFormat = new IntlMessageFormat(message, locale);
+      messageFormat = new IntlMessageFormat(message, locale, format);
       if (!cachedFormatByLocale[locale]) {
         cachedFormatByLocale[locale] = {};
       }

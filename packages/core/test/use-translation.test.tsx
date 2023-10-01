@@ -1,14 +1,15 @@
 import { render, screen } from '@testing-library/react';
+import { type Formats } from 'intl-messageformat';
 import { expect, it } from 'vitest';
 
 import { LitIntlProvider } from '../src/lit-intl.provider';
 import { type TranslationValue } from '../src/types/translation';
 import { useTranslation } from '../src/use-translation';
 
-function renderMessage(message: string, values?: TranslationValue) {
+function renderMessage(message: string, values?: TranslationValue, format?: Partial<Formats>) {
   function Component() {
     const t = useTranslation();
-    return <>{t('message', values)}</>;
+    return <>{t('message', values, format)}</>;
   }
 
   return render(
@@ -29,7 +30,15 @@ it('should be print Hello with name value', () => {
 });
 
 it('should be print number currency format', () => {
-  renderMessage('{price, number, ::currency/EUR}', { price: 400 });
+  renderMessage(
+    '{price, number, currency}',
+    { price: 400 },
+    {
+      number: {
+        currency: { style: 'currency', currency: 'EUR' },
+      },
+    },
+  );
   screen.getByText('€400.00');
 });
 
