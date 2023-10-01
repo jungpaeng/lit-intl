@@ -14,7 +14,7 @@ describe('formatDate', () => {
     }
 
     render(
-      <IntlProvider message={{}}>
+      <IntlProvider message={{}} locale="en">
         <Component />
       </IntlProvider>,
     );
@@ -44,7 +44,7 @@ describe('formatNumber', () => {
     }
 
     render(
-      <IntlProvider message={{}}>
+      <IntlProvider message={{}} locale="en">
         <Component />
       </IntlProvider>,
     );
@@ -69,7 +69,7 @@ describe('formatRelativeTime', () => {
     }
 
     render(
-      <IntlProvider message={{}}>
+      <IntlProvider message={{}} locale="en">
         <Component />
       </IntlProvider>,
     );

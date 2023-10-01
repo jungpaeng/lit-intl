@@ -2,10 +2,32 @@ import React from 'react';
 
 import { IntlContext, type IntlContextValue } from './intl.context';
 
-type IntlProviderProps = React.PropsWithChildren<IntlContextValue>;
+type DefaultGetMessageFallbackArgs = {
+  key: string;
+  namespace?: string;
+};
 
-export function IntlProvider({ children, locale, message }: IntlProviderProps) {
-  return <IntlContext.Provider value={{ message, locale }}>{children}</IntlContext.Provider>;
+function defaultGetMessageFallback({ key, namespace }: DefaultGetMessageFallbackArgs) {
+  return `IntlError in ${[namespace, key].filter((part) => part != null).join('.')}`;
+}
+
+type IntlProviderProps = React.PropsWithChildren<
+  Pick<IntlContextValue, 'message' | 'locale'> &
+    Partial<Pick<IntlContextValue, 'onError' | 'getMessageFallback'>>
+>;
+
+export function IntlProvider({
+  children,
+  locale,
+  message,
+  onError = console.error,
+  getMessageFallback = defaultGetMessageFallback,
+}: IntlProviderProps) {
+  return (
+    <IntlContext.Provider value={{ message, locale, onError, getMessageFallback }}>
+      {children}
+    </IntlContext.Provider>
+  );
 }
 
 export function useIntlContext() {

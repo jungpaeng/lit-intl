@@ -1,10 +1,14 @@
 import { render, screen } from '@testing-library/react';
 import { type Formats } from 'intl-messageformat';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
+import IntlError, { IntlErrorCode } from '../src/intl-error';
 import { IntlProvider } from '../src/intl.provider';
 import { type TranslationValue } from '../src/types/translation';
 import { useTranslation } from '../src/use-translation';
+
+// Bypass import lint rule ...
+new IntlError(IntlErrorCode.MISSING_MESSAGE, '');
 
 function renderMessage(message: string, values?: TranslationValue, format?: Partial<Formats>) {
   function Component() {
@@ -13,7 +17,7 @@ function renderMessage(message: string, values?: TranslationValue, format?: Part
   }
 
   return render(
-    <IntlProvider message={{ message }}>
+    <IntlProvider message={{ message }} locale="en">
       <Component />
     </IntlProvider>,
   );
@@ -100,5 +104,104 @@ describe('use-translation', () => {
     );
 
     expect(container.innerHTML).toBe('Our price is <b>$10,000</b> with <i>10% discount</i>');
+  });
+});
+
+describe('error handling', () => {
+  it('allows to configure a fallback', () => {
+    const onError = vi.fn();
+
+    function Component() {
+      const t = useTranslation('Component');
+      return <>{t('label')}</>;
+    }
+
+    render(
+      <IntlProvider
+        message={{}}
+        locale="en"
+        onError={onError}
+        getMessageFallback={() => 'fallback'}
+      >
+        <Component />
+      </IntlProvider>,
+    );
+
+    expect(onError).toHaveBeenCalled();
+    screen.getByText('fallback');
+  });
+
+  it('handles unavailable namespaces', () => {
+    const onError = vi.fn();
+    function Component() {
+      const t = useTranslation('Component');
+      return <>{t('label')}</>;
+    }
+
+    render(
+      <IntlProvider locale="en" message={{}} onError={onError}>
+        <Component />
+      </IntlProvider>,
+    );
+
+    const error: IntlError = onError.mock.calls[0][0];
+    expect(error.message).toBe('MISSING_MESSAGE: Could not resolve `Component` in messages.');
+    expect(error.code).toBe(IntlErrorCode.MISSING_MESSAGE);
+    screen.getByText('IntlError in Component.label');
+  });
+
+  it('handles unavailable messages within an existing namespace', () => {
+    const onError = vi.fn();
+    function Component() {
+      const t = useTranslation('Component');
+      return <>{t('label')}</>;
+    }
+    render(
+      <IntlProvider locale="en" message={{ Component: {} }} onError={onError}>
+        <Component />
+      </IntlProvider>,
+    );
+    const error: IntlError = onError.mock.calls[0][0];
+    expect(error.message).toBe('MISSING_MESSAGE: Could not resolve `label` in `Component`.');
+    expect(error.code).toBe(IntlErrorCode.MISSING_MESSAGE);
+    screen.getByText('IntlError in Component.label');
+  });
+
+  it('handles unparseable messages', () => {
+    const onError = vi.fn();
+    function Component() {
+      const t = useTranslation();
+      return <>{t('price', { value: 10 })}</>;
+    }
+
+    render(
+      <IntlProvider locale="en" message={{ price: '{value, currency}' }} onError={onError}>
+        <Component />
+      </IntlProvider>,
+    );
+    const error: IntlError = onError.mock.calls[0][0];
+    expect(error.message).toBe('INVALID_MESSAGE: INVALID_ARGUMENT_TYPE');
+    expect(error.code).toBe(IntlErrorCode.INVALID_MESSAGE);
+    screen.getByText('IntlError in price');
+  });
+
+  it('handles formatting errors', () => {
+    const onError = vi.fn();
+    function Component() {
+      const t = useTranslation();
+      return <>{t('price')}</>;
+    }
+
+    render(
+      <IntlProvider locale="en" message={{ price: '{value}' }} onError={onError}>
+        <Component />
+      </IntlProvider>,
+    );
+    const error: IntlError = onError.mock.calls[0][0];
+    expect(error.message).toBe(
+      'FORMATTING_ERROR: The intl string context variable "value" was not provided to the string "{value}"',
+    );
+    expect(error.code).toBe(IntlErrorCode.FORMATTING_ERROR);
+    screen.getByText('IntlError in price');
   });
 });
