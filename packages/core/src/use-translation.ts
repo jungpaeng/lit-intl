@@ -2,7 +2,7 @@ import React from 'react';
 
 import IntlMessageFormat, { type Formats } from 'intl-messageformat';
 
-import { LitIntlContext } from './lit-intl.context';
+import { useIntlContext } from './lit-intl.provider';
 import { type IntlMessage } from './types/intl-message';
 import { type TranslationValue } from './types/translation';
 
@@ -50,14 +50,10 @@ function prepareTranslationValues(translationValue?: TranslationValue) {
 }
 
 export function useTranslation(path?: string) {
-  const context = React.useContext(LitIntlContext);
+  const context = useIntlContext();
   const cachedFormatByLocaleRef = React.useRef<Record<string, Record<string, IntlMessageFormat>>>(
     {},
   );
-
-  if (context == null) {
-    throw new Error();
-  }
 
   const { message: allMessage, locale = 'not-locale' } = context;
   const intlMessage = React.useMemo(() => {

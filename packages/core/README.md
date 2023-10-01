@@ -123,3 +123,31 @@ function Component() {
   );
 }
 ```
+
+If you need to format dates, times, and number types that are not included in the message, you can use the following hook.
+
+```js
+import { useIntl } from '@lit-intl/core';
+
+function Component() {
+  const intl = useIntl();
+  const dateTime = new Date('2020-11-20T10:36:01.516Z')
+
+  return (
+    <>
+      {/*
+        * See MDN docs for options:
+        * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat#Using_options
+        */}
+      {intl.formatDateTime(dateTime, { year: 'numeric', month: 'numeric', day: 'numeric' })}
+      {intl.formatDateTime(dateTime, { hour: 'numeric', minute: 'numeric' })}
+
+      {/*
+        * See MDN docs for options:
+        * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat#Using_options
+        */}
+      {intl.formatNumber(499.90, { style: 'currency', currency: 'USD' })}
+    <>
+  );
+}
+```
