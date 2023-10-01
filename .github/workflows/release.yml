@@ -1,0 +1,25 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Unplugged Packages
+        run: yarn install --immutable --immutable-cache
+      - name: Package Build
+        run: yarn build
+      - name: Package Release
+        id: changesets
+        uses: cometkim/yarn-changeset-action@v1
+        with:
+          autoPublish: true
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
