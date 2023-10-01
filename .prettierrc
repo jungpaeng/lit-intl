@@ -1,0 +1,19 @@
+{
+  "semi": true,
+  "trailingComma": "all",
+  "singleQuote": true,
+  "useTabs": false,
+  "endOfLine": "lf",
+  "tabWidth": 2,
+  "printWidth": 100,
+  "overrides": [
+    {
+      "files": "./src/**/*.json",
+      "options": {
+        "jsonRecursiveSort": true,
+        "parser": "json",
+        "plugins": ["prettier-plugin-sort-json"]
+      }
+    }
+  ]
+}
