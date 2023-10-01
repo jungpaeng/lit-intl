@@ -34,10 +34,10 @@ function Follower({user}) {
 
 ## Installation
 
-1. Install `lit-intl` in your project
+1. Install `@lit-intl/core` in your project
 2. Add the provider your top code
 ```jsx
-import {LitIntlProvider} from 'lit-intl';
+import {LitIntlProvider} from '@lit-intl/core';
 
 export default function App() {
   return (
