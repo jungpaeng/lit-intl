@@ -89,6 +89,10 @@ export function useTranslation(path?: string) {
       cachedFormatByLocale[locale][idPath] = messageFormat;
     }
 
-    return messageFormat.format(prepareTranslationValues(value));
+    return messageFormat.format(
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore It's working fine, but formatJS can't get a type for richText and is throwing an error.
+      prepareTranslationValues(value),
+    );
   };
 }
