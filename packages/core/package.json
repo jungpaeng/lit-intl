@@ -9,6 +9,9 @@
   "workspaces": [
     "packages/*"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "clean": "rimraf dist",
     "build": "yarn clean && yarn build:js && yarn build:dts",
