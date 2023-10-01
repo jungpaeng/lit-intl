@@ -1,3 +1,2 @@
-export function sum(a: number, b: number) {
-  return a + b;
-}
+export * from './lit-intl.provider';
+export * from './use-translation';
