@@ -1,5 +1,11 @@
 # @lit-intl/core
 
+## 0.0.3
+
+### Patch Changes
+
+- 71194c9: Add useIntl
+
 ## 0.0.2
 
 ### Patch Changes
