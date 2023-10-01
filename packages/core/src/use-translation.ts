@@ -24,6 +24,31 @@ function resolvePath(messages: IntlMessage, idPath: string) {
   return message;
 }
 
+function prepareTranslationValues(translationValue?: TranslationValue) {
+  if (!translationValue) return translationValue;
+  const transformedValues: TranslationValue = {};
+
+  Object.keys(translationValue).forEach((key) => {
+    let index = 0;
+    const value = translationValue[key];
+
+    const transformed =
+      typeof value === 'function'
+        ? (children: React.ReactNode) => {
+            const result = value(children);
+
+            return React.isValidElement(result)
+              ? React.cloneElement(result, { key: result.key || key + index++ })
+              : result;
+          }
+        : value;
+
+    transformedValues[key] = transformed;
+  });
+
+  return transformedValues;
+}
+
 export function useTranslation(path?: string) {
   const context = React.useContext(LitIntlContext);
   const cachedFormatByLocaleRef = React.useRef<Record<string, Record<string, IntlMessageFormat>>>(
@@ -64,6 +89,6 @@ export function useTranslation(path?: string) {
       cachedFormatByLocale[locale][idPath] = messageFormat;
     }
 
-    return messageFormat.format(value);
+    return messageFormat.format(prepareTranslationValues(value));
   };
 }
