@@ -158,7 +158,6 @@ export function useTranslation(namespace?: string) {
           );
         } catch (_error) {
           const error = _error as SystemError;
-          console.log('test:: error', error.toString());
           return getFallbackFromError(IntlErrorCode.INVALID_MESSAGE, error.message);
         }
 
