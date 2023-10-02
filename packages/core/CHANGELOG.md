@@ -1,5 +1,11 @@
 # @lit-intl/core
 
+## 0.0.6
+
+### Patch Changes
+
+- e00c448: useTranslate return type
+
 ## 0.0.5
 
 ### Patch Changes
