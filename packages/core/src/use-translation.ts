@@ -182,7 +182,11 @@ export function useTranslation(namespace?: string) {
           );
         }
 
-        return formattedMessage;
+        return React.isValidElement(formattedMessage) ||
+          Array.isArray(formattedMessage) ||
+          typeof formattedMessage === 'string'
+          ? formattedMessage
+          : String(formattedMessage);
       } catch (_error) {
         const error = _error as SystemError;
         return getFallbackFromError(IntlErrorCode.FORMATTING_ERROR, error.message);
