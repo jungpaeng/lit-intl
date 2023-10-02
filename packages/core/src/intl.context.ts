@@ -7,6 +7,7 @@ import { type IntlMessage } from './types/intl-message';
 export type IntlContextValue = {
   message?: IntlMessage;
   locale: string;
+  now?: Date;
   timeZone?: string;
   formats?: Partial<Format>;
   onError: (error: IntlError) => void;

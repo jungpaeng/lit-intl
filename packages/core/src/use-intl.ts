@@ -41,7 +41,7 @@ function getRelativeTimeFormatConfig(seconds: number) {
 }
 
 export function useIntl() {
-  const { formats, locale, timeZone, onError } = useIntlContext();
+  const { formats, locale, now: globalNow, timeZone, onError } = useIntlContext();
 
   function resolveFormatOrOptions<Format>(
     typeFormats: Record<string, Format> | undefined,
@@ -120,14 +120,26 @@ export function useIntl() {
     });
   }
 
-  function formatRelativeTime(date: number | Date, now: number | Date) {
-    const dateDate = date instanceof Date ? date : new Date(date);
-    const nowDate = now instanceof Date ? now : new Date(now);
-
-    const seconds = (dateDate.getTime() - nowDate.getTime()) / 1_000;
-    const { unit, value } = getRelativeTimeFormatConfig(seconds);
-
+  function formatRelativeTime(date: number | Date, now?: number | Date) {
     try {
+      if (now == null) {
+        if (globalNow != null) {
+          now = globalNow;
+        } else {
+          throw new Error(
+            process.env.NODE_ENV !== 'production'
+              ? `The \`now\` parameter wasn't provided to \`formatRelativeTime\` and there was no global fallback configured on the provider.`
+              : undefined,
+          );
+        }
+      }
+
+      const dateDate = date instanceof Date ? date : new Date(date);
+      const nowDate = now instanceof Date ? now : new Date(now);
+
+      const seconds = (dateDate.getTime() - nowDate.getTime()) / 1_000;
+      const { unit, value } = getRelativeTimeFormatConfig(seconds);
+
       return new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(value, unit);
     } catch (_error) {
       const error = _error as SystemError;

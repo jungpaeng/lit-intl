@@ -19,7 +19,7 @@ describe('formatDateTime', () => {
     }
 
     render(
-      <IntlProvider message={{}} locale="en">
+      <IntlProvider locale="en">
         <Component />
       </IntlProvider>,
     );
@@ -91,7 +91,7 @@ describe('formatDateTime', () => {
       }
 
       render(
-        <IntlProvider timeZone="Asia/Seoul" message={{}} locale={'en'}>
+        <IntlProvider timeZone="Asia/Seoul" locale={'en'}>
           <Component />
         </IntlProvider>,
       );
@@ -114,13 +114,29 @@ describe('formatDateTime', () => {
       }
 
       render(
-        <IntlProvider timeZone="Asia/Seoul" message={{}} locale={'en'}>
+        <IntlProvider timeZone="Asia/Seoul" locale={'en'}>
           <Component />
         </IntlProvider>,
       );
 
       screen.getByText('1:33 AM');
     });
+  });
+
+  it('can use a global `now` fallback', () => {
+    function Component() {
+      const intl = useIntl();
+      const mockDate = new Date('1984-11-20T10:36:00.000Z');
+      return <>{intl.formatRelativeTime(mockDate)}</>;
+    }
+
+    render(
+      <IntlProvider now={new Date('2018-11-20T10:36:00.000Z')} locale={'en'}>
+        <Component />
+      </IntlProvider>,
+    );
+
+    screen.getByText('34 years ago');
   });
 
   describe('error handling', () => {
@@ -133,7 +149,7 @@ describe('formatDateTime', () => {
       }
 
       const { container } = render(
-        <IntlProvider onError={onError} message={{}} locale={'en'}>
+        <IntlProvider onError={onError} locale={'en'}>
           <Component />
         </IntlProvider>,
       );
@@ -155,7 +171,7 @@ describe('formatDateTime', () => {
       }
 
       const { container } = render(
-        <IntlProvider onError={onError} message={{}} locale={'en'}>
+        <IntlProvider onError={onError} locale={'en'}>
           <Component />
         </IntlProvider>,
       );
@@ -166,6 +182,28 @@ describe('formatDateTime', () => {
         'FORMATTING_ERROR: Value very long out of range for Intl.DateTimeFormat options property year',
       );
       expect(container.textContent).toMatch(/Oct 01 2023/);
+    });
+
+    it('throws when no `now` value is available', () => {
+      const onError = vi.fn();
+
+      function Component() {
+        const intl = useIntl();
+        const mockDate = new Date('1984-11-20T10:36:00.000Z');
+        return <>{intl.formatRelativeTime(mockDate)}</>;
+      }
+
+      render(
+        <IntlProvider onError={onError} locale={'en'}>
+          <Component />
+        </IntlProvider>,
+      );
+
+      const error: IntlError = onError.mock.calls[0][0];
+      expect(error.code).toBe(IntlErrorCode.FORMATTING_ERROR);
+      expect(error.message).toBe(
+        "FORMATTING_ERROR: The `now` parameter wasn't provided to `formatRelativeTime` and there was no global fallback configured on the provider.",
+      );
     });
   });
 });
@@ -178,7 +216,7 @@ describe('formatNumber', () => {
     }
 
     render(
-      <IntlProvider message={{}} locale="en">
+      <IntlProvider locale="en">
         <Component />
       </IntlProvider>,
     );
@@ -225,7 +263,7 @@ describe('formatNumber', () => {
       }
 
       const { container } = render(
-        <IntlProvider onError={onError} message={{}} locale={'en'}>
+        <IntlProvider onError={onError} locale={'en'}>
           <Component />
         </IntlProvider>,
       );
@@ -247,7 +285,7 @@ describe('formatNumber', () => {
       }
 
       const { container } = render(
-        <IntlProvider onError={onError} message={{}} locale={'en'}>
+        <IntlProvider onError={onError} locale={'en'}>
           <Component />
         </IntlProvider>,
       );
@@ -268,7 +306,7 @@ describe('formatRelativeTime', () => {
     }
 
     render(
-      <IntlProvider message={{}} locale="en">
+      <IntlProvider locale="en">
         <Component />
       </IntlProvider>,
     );
@@ -332,7 +370,7 @@ describe('formatRelativeTime', () => {
       }
 
       const { container } = render(
-        <IntlProvider onError={onError} message={{}} locale={'en'}>
+        <IntlProvider onError={onError} locale={'en'}>
           <Component />
         </IntlProvider>,
       );
