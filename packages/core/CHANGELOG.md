@@ -1,5 +1,11 @@
 # @lit-intl/core
 
+## 0.0.5
+
+### Patch Changes
+
+- 8923609: @lit-intl/core 0.0.5
+
 ## 0.0.4
 
 ### Patch Changes
