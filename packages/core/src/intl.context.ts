@@ -5,7 +5,7 @@ import { type Format } from './types/format';
 import { type IntlMessage } from './types/intl-message';
 
 export type IntlContextValue = {
-  message: IntlMessage;
+  message?: IntlMessage;
   locale: string;
   timeZone?: string;
   formats?: Partial<Format>;

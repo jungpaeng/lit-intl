@@ -12,7 +12,15 @@ import { convertFormatToIntlMessageFormat } from './utils/convert-format-to-intl
  * @description json 파일 내에서 특정 key에 해당하는 값을 반환합니다.
  * @description namespace를 전달함으로서 에러가 발생했을 때 부모의 key를 명시할 수 있습니다.
  */
-function resolvePath(messages: IntlMessage, idPath: string, namespace?: string) {
+function resolvePath(messages: IntlMessage | undefined, idPath: string, namespace?: string) {
+  if (messages == null) {
+    throw new Error(
+      process.env.NODE_ENV !== 'production'
+        ? `No messages available at \`${namespace}\`.`
+        : undefined,
+    );
+  }
+
   let message = messages;
 
   idPath.split('.').forEach((part) => {
