@@ -107,6 +107,38 @@ describe('use-translation', () => {
   });
 });
 
+it('has a stable reference', () => {
+  let existingT: any;
+
+  function Component({ count }: { count: number }) {
+    const t = useTranslation();
+
+    if (existingT) {
+      expect(t).toBe(existingT);
+    } else {
+      existingT = t;
+    }
+
+    return <>{count}</>;
+  }
+
+  const messages = {};
+
+  const { rerender } = render(
+    <IntlProvider locale="en" message={messages}>
+      <Component count={1} />
+    </IntlProvider>,
+  );
+  screen.getByText('1');
+
+  rerender(
+    <IntlProvider locale="en" message={messages}>
+      <Component count={2} />
+    </IntlProvider>,
+  );
+  screen.getByText('2');
+});
+
 describe('error handling', () => {
   it('allows to configure a fallback', () => {
     const onError = vi.fn();

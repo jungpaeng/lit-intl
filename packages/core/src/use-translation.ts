@@ -99,85 +99,88 @@ export function useTranslation(namespace?: string) {
     }
   }, [allMessage, onError, namespace]);
 
-  return (key: string, value?: TranslationValue, format?: Partial<Formats>) => {
-    const cachedFormatByLocale = cachedFormatByLocaleRef.current;
+  return React.useCallback(
+    (key: string, value?: TranslationValue, format?: Partial<Formats>) => {
+      const cachedFormatByLocale = cachedFormatByLocaleRef.current;
 
-    if (messageOrError instanceof IntlError) {
-      return getMessageFallback({ error: messageOrError, key, namespace });
-    }
+      if (messageOrError instanceof IntlError) {
+        return getMessageFallback({ error: messageOrError, key, namespace });
+      }
 
-    function getFallbackFromError(code: IntlErrorCode, message?: string) {
-      const error = new IntlError(code, message);
-      onError(error);
+      function getFallbackFromError(code: IntlErrorCode, message?: string) {
+        const error = new IntlError(code, message);
+        onError(error);
 
-      return getMessageFallback({ error, key, namespace });
-    }
+        return getMessageFallback({ error, key, namespace });
+      }
 
-    const intlMessage = messageOrError;
-    let messageFormat: IntlMessageFormat;
+      const intlMessage = messageOrError;
+      let messageFormat: IntlMessageFormat;
 
-    if (cachedFormatByLocale[locale]?.[key] != null) {
-      // 캐시되어있다면 해당 messageFormat 메시지를 반환합니다.
-      messageFormat = cachedFormatByLocale[locale][key];
-    } else {
-      let message;
+      if (cachedFormatByLocale[locale]?.[key] != null) {
+        // 캐시되어있다면 해당 messageFormat 메시지를 반환합니다.
+        messageFormat = cachedFormatByLocale[locale][key];
+      } else {
+        let message;
+
+        try {
+          // key 값에 대응하는 value(message)를 조회합니다.
+          message = resolvePath(intlMessage, key, namespace);
+        } catch (_error) {
+          const error = _error as SystemError;
+          return getFallbackFromError(IntlErrorCode.MISSING_MESSAGE, error.message);
+        }
+
+        // 조회된 message는 object 타입일 수 없습니다.
+        if (typeof message == 'object') {
+          return getFallbackFromError(
+            IntlErrorCode.INSUFFICIENT_PATH,
+            process.env.NODE_ENV !== 'production'
+              ? `Insufficient path specified for \`${key}\` in \`${namespace}\``
+              : undefined,
+          );
+        }
+
+        try {
+          // IntlMessageFormat을 실행시키며, 실패시 INVALID_MESSAGE를 반환합니다.
+          messageFormat = new IntlMessageFormat(
+            message,
+            locale,
+            convertFormatToIntlMessageFormat({ ...globalFormats, ...format }),
+          );
+        } catch (_error) {
+          const error = _error as SystemError;
+          console.log('test:: error', error.toString());
+          return getFallbackFromError(IntlErrorCode.INVALID_MESSAGE, error.message);
+        }
+
+        if (!cachedFormatByLocale[locale]) {
+          cachedFormatByLocale[locale] = {};
+        }
+        cachedFormatByLocale[locale][key] = messageFormat;
+      }
 
       try {
-        // key 값에 대응하는 value(message)를 조회합니다.
-        message = resolvePath(intlMessage, key, namespace);
+        const formattedMessage = messageFormat.format(
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore It's working fine, but formatJS can't get a type for richText and is throwing an error.
+          prepareTranslationValues(value),
+        );
+
+        if (formattedMessage == null) {
+          throw new Error(
+            process.env.NODE_ENV !== 'production'
+              ? `Unable to format ${[namespace, key].join('.')}`
+              : undefined,
+          );
+        }
+
+        return formattedMessage;
       } catch (_error) {
         const error = _error as SystemError;
-        return getFallbackFromError(IntlErrorCode.MISSING_MESSAGE, error.message);
+        return getFallbackFromError(IntlErrorCode.FORMATTING_ERROR, error.message);
       }
-
-      // 조회된 message는 object 타입일 수 없습니다.
-      if (typeof message == 'object') {
-        return getFallbackFromError(
-          IntlErrorCode.INSUFFICIENT_PATH,
-          process.env.NODE_ENV !== 'production'
-            ? `Insufficient path specified for \`${key}\` in \`${namespace}\``
-            : undefined,
-        );
-      }
-
-      try {
-        // IntlMessageFormat을 실행시키며, 실패시 INVALID_MESSAGE를 반환합니다.
-        messageFormat = new IntlMessageFormat(
-          message,
-          locale,
-          convertFormatToIntlMessageFormat({ ...globalFormats, ...format }),
-        );
-      } catch (_error) {
-        const error = _error as SystemError;
-        console.log('test:: error', error.toString());
-        return getFallbackFromError(IntlErrorCode.INVALID_MESSAGE, error.message);
-      }
-
-      if (!cachedFormatByLocale[locale]) {
-        cachedFormatByLocale[locale] = {};
-      }
-      cachedFormatByLocale[locale][key] = messageFormat;
-    }
-
-    try {
-      const formattedMessage = messageFormat.format(
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore It's working fine, but formatJS can't get a type for richText and is throwing an error.
-        prepareTranslationValues(value),
-      );
-
-      if (formattedMessage == null) {
-        throw new Error(
-          process.env.NODE_ENV !== 'production'
-            ? `Unable to format ${[namespace, key].join('.')}`
-            : undefined,
-        );
-      }
-
-      return formattedMessage;
-    } catch (_error) {
-      const error = _error as SystemError;
-      return getFallbackFromError(IntlErrorCode.FORMATTING_ERROR, error.message);
-    }
-  };
+    },
+    [getMessageFallback, globalFormats, locale, messageOrError, namespace, onError],
+  );
 }
