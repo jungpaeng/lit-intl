@@ -41,7 +41,7 @@ function getRelativeTimeFormatConfig(seconds: number) {
 }
 
 export function useIntl() {
-  const { formats, locale, onError } = useIntlContext();
+  const { formats, locale, timeZone, onError } = useIntlContext();
 
   function resolveFormatOrOptions<Format>(
     typeFormats: Record<string, Format> | undefined,
@@ -97,6 +97,10 @@ export function useIntl() {
     formatOrOptions?: string | Intl.DateTimeFormatOptions,
   ) {
     return getFormattedValue(value, formatOrOptions, formats?.dateTime, (format) => {
+      if (timeZone != null && format?.timeZone == null) {
+        format = { ...format, timeZone };
+      }
+
       return new Intl.DateTimeFormat(locale, format).format(value);
     });
   }

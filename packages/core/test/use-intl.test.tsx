@@ -78,6 +78,51 @@ describe('formatDateTime', () => {
     screen.getByText('11 PM');
   });
 
+  describe('time zones', () => {
+    it('converts a date to the target time zone', () => {
+      renderDateTime(mockDate, { timeZone: 'Asia/Seoul', hour: 'numeric', minute: 'numeric' });
+      screen.getByText('11:33 PM');
+    });
+
+    it('can use a global time zone', () => {
+      function Component() {
+        const intl = useIntl();
+        return <>{intl.formatDateTime(mockDate, { hour: 'numeric', minute: 'numeric' })}</>;
+      }
+
+      render(
+        <IntlProvider timeZone="Asia/Seoul" message={{}} locale={'en'}>
+          <Component />
+        </IntlProvider>,
+      );
+
+      screen.getByText('11:33 PM');
+    });
+
+    it('can override a global time zone', () => {
+      function Component() {
+        const intl = useIntl();
+        return (
+          <>
+            {intl.formatDateTime(mockDate, {
+              timeZone: 'Australia/Sydney',
+              hour: 'numeric',
+              minute: 'numeric',
+            })}
+          </>
+        );
+      }
+
+      render(
+        <IntlProvider timeZone="Asia/Seoul" message={{}} locale={'en'}>
+          <Component />
+        </IntlProvider>,
+      );
+
+      screen.getByText('1:33 AM');
+    });
+  });
+
   describe('error handling', () => {
     it('handles missing formats', () => {
       const onError = vi.fn();
