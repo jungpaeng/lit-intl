@@ -10,7 +10,6 @@
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "typeRoots": ["node_modules/@types"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true
   },

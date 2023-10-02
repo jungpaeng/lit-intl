@@ -745,6 +745,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@lit-intl/core", "workspace:packages/core"],\
             ["@formatjs/ecma402-abstract", "npm:1.17.2"],\
             ["@testing-library/react", "virtual:2cfb48767f1c50dbf748d0337b42d4c8c9a457f4cec509d80ae7b8b82b6ee1bc07a8585b354f61fc908a906c429f32f0018c4b03a66d82aec3e34f8d4024d091#npm:14.0.0"],\
+            ["@types/node", "npm:20.8.0"],\
             ["@types/react", "npm:18.2.23"],\
             ["esbuild", "npm:0.19.4"],\
             ["esbuild-node-externals", "virtual:2cfb48767f1c50dbf748d0337b42d4c8c9a457f4cec509d80ae7b8b82b6ee1bc07a8585b354f61fc908a906c429f32f0018c4b03a66d82aec3e34f8d4024d091#npm:1.9.0"],\

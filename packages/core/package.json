@@ -52,6 +52,7 @@
   },
   "devDependencies": {
     "@testing-library/react": "^14.0.0",
+    "@types/node": "^20.8.0",
     "@types/react": "^18.2.23",
     "esbuild": "^0.19.4",
     "esbuild-node-externals": "^1.9.0",
