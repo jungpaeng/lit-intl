@@ -18,7 +18,10 @@
       }
     }
   },
-  "repository": "https://github.com/jungpaeng/lit-intl.git",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jungpaeng/lit-intl/tree/main/packages/core"
+  },
   "author": "jungpaeng",
   "license": "MIT",
   "packageManager": "yarn@3.6.3",
