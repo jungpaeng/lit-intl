@@ -47,6 +47,7 @@
     "test": "yarn vitest"
   },
   "dependencies": {
+    "@formatjs/ecma402-abstract": "^1.17.2",
     "intl-messageformat": "^10.5.3"
   },
   "devDependencies": {

@@ -481,7 +481,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@formatjs/ecma402-abstract@npm:1.17.2":
+"@formatjs/ecma402-abstract@npm:1.17.2, @formatjs/ecma402-abstract@npm:^1.17.2":
   version: 1.17.2
   resolution: "@formatjs/ecma402-abstract@npm:1.17.2"
   dependencies:
@@ -589,6 +589,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@lit-intl/core@workspace:packages/core"
   dependencies:
+    "@formatjs/ecma402-abstract": ^1.17.2
     "@testing-library/react": ^14.0.0
     "@types/react": ^18.2.23
     esbuild: ^0.19.4
