@@ -1,16 +1,16 @@
 import { render, screen } from '@testing-library/react';
-import { type Formats } from 'intl-messageformat';
 import { describe, expect, it, vi } from 'vitest';
 
 import IntlError, { IntlErrorCode } from '../src/intl-error';
 import { IntlProvider } from '../src/intl.provider';
+import { type Format } from '../src/types/format';
 import { type TranslationValue } from '../src/types/translation';
 import { useTranslation } from '../src/use-translation';
 
 // Bypass import lint rule ...
 new IntlError(IntlErrorCode.MISSING_MESSAGE, '');
 
-function renderMessage(message: string, values?: TranslationValue, format?: Partial<Formats>) {
+function renderMessage(message: string, values?: TranslationValue, format?: Partial<Format>) {
   function Component() {
     const t = useTranslation();
     return <>{t('message', values, format)}</>;
@@ -203,5 +203,53 @@ describe('error handling', () => {
     );
     expect(error.code).toBe(IntlErrorCode.FORMATTING_ERROR);
     screen.getByText('IntlError in price');
+  });
+});
+
+describe('global formats', () => {
+  function renderDate(
+    message: string,
+    globalFormats?: Partial<Format>,
+    overrideFormats?: Partial<Format>,
+  ) {
+    function Component() {
+      const t = useTranslation();
+      const date = new Date('2020-11-19T15:38:43.700Z');
+      return <>{t('date', { value: date }, overrideFormats)}</>;
+    }
+
+    render(
+      <IntlProvider formats={globalFormats} locale="en" message={{ date: message }}>
+        <Component />
+      </IntlProvider>,
+    );
+  }
+
+  it('allows to add global formats', () => {
+    renderDate('{value, date, onlyYear}', {
+      dateTime: { onlyYear: { year: 'numeric' } },
+    });
+
+    screen.getByText('2020');
+  });
+
+  it('can modify existing global formats', () => {
+    renderDate('{value, date, full}', {
+      dateTime: {
+        full: { weekday: undefined },
+      },
+    });
+
+    screen.getByText('November 20, 2020');
+  });
+
+  it('allows to override global formats locally', () => {
+    renderDate(
+      '{value, date, full}',
+      { dateTime: { full: { weekday: undefined } } },
+      { dateTime: { full: { weekday: 'long' } } },
+    );
+
+    screen.getByText('Friday, November 20, 2020');
   });
 });

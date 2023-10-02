@@ -1,3 +1,6 @@
+import { type NumberFormatOptions } from '@formatjs/ecma402-abstract';
+
+import IntlError, { IntlErrorCode, type SystemError } from './intl-error';
 import { useIntlContext } from './intl.provider';
 
 const MINUTE = 60;
@@ -38,14 +41,79 @@ function getRelativeTimeFormatConfig(seconds: number) {
 }
 
 export function useIntl() {
-  const { locale } = useIntlContext();
+  const { formats, locale, onError } = useIntlContext();
 
-  function formatDateTime(value: number | Date, options?: Intl.DateTimeFormatOptions) {
-    return new Intl.DateTimeFormat(locale, options).format(value);
+  function resolveFormatOrOptions<Format>(
+    typeFormats: Record<string, Format> | undefined,
+    formatOrOptions?: string | Format,
+  ): Format | undefined {
+    if (typeof formatOrOptions !== 'string') {
+      return formatOrOptions;
+    }
+
+    const formatName = formatOrOptions;
+    const format = typeFormats?.[formatName];
+
+    if (format == null) {
+      const error = new IntlError(
+        IntlErrorCode.MISSING_FORMAT,
+        process.env.NODE_ENV !== 'production'
+          ? `Format \`${formatName}\` is not available. You can configure it on the provider or provide custom options.`
+          : undefined,
+      );
+
+      onError(error);
+      throw error;
+    }
+
+    return format;
   }
 
-  function formatNumber(value: number | bigint, options?: Intl.NumberFormatOptions) {
-    return new Intl.NumberFormat(locale, options).format(value);
+  function getFormattedValue<Value, Format>(
+    value: Value,
+    formatOrOptions: string | Format,
+    typeFormats: Record<string, Format> | undefined,
+    formatter: (format?: Format) => string,
+  ) {
+    let format;
+    try {
+      format = resolveFormatOrOptions(typeFormats, formatOrOptions);
+    } catch {
+      return String(value);
+    }
+
+    try {
+      return formatter(format);
+    } catch (_error) {
+      const error = _error as SystemError;
+      onError(new IntlError(IntlErrorCode.FORMATTING_ERROR, error.message));
+
+      return String(value);
+    }
+  }
+
+  function formatDateTime(
+    value: number | Date,
+    formatOrOptions?: string | Intl.DateTimeFormatOptions,
+  ) {
+    return getFormattedValue(value, formatOrOptions, formats?.dateTime, (format) => {
+      return new Intl.DateTimeFormat(locale, format).format(value);
+    });
+  }
+
+  /**
+   * @description Intl.NumberFormat를 래핑합니다.
+   * @param formatOrOptions useGrouping 옵션이 들어오는 경우, undefined와 boolean 타입이 아니라면 true가 지정됩니다.
+   * @param formatOrOptions signDisplay 옵션이 들어오는 경우, negative 옵션이라면 undefined가 지정됩니다.
+   */
+  function formatNumber(value: number | bigint, formatOrOptions?: string | NumberFormatOptions) {
+    return getFormattedValue(value, formatOrOptions, formats?.number, (format) => {
+      return new Intl.NumberFormat(locale, {
+        ...format,
+        useGrouping: format?.useGrouping == null ? undefined : !!format?.useGrouping,
+        signDisplay: format?.signDisplay === 'negative' ? undefined : format?.signDisplay,
+      }).format(value);
+    });
   }
 
   function formatRelativeTime(date: number | Date, now: number | Date) {
@@ -55,7 +123,14 @@ export function useIntl() {
     const seconds = (dateDate.getTime() - nowDate.getTime()) / 1_000;
     const { unit, value } = getRelativeTimeFormatConfig(seconds);
 
-    return new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(value, unit);
+    try {
+      return new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(value, unit);
+    } catch (_error) {
+      const error = _error as SystemError;
+      onError(new IntlError(IntlErrorCode.FORMATTING_ERROR, error.message));
+
+      return String(date);
+    }
   }
 
   return { formatDateTime, formatNumber, formatRelativeTime };

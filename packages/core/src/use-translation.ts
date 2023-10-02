@@ -6,6 +6,7 @@ import IntlError, { IntlErrorCode, type SystemError } from './intl-error';
 import { useIntlContext } from './intl.provider';
 import { type IntlMessage } from './types/intl-message';
 import { type TranslationValue } from './types/translation';
+import { convertFormatToIntlMessageFormat } from './utils/convert-format-to-intl-message-format';
 
 /**
  * @description json 파일 내에서 특정 key에 해당하는 값을 반환합니다.
@@ -61,12 +62,16 @@ function prepareTranslationValues(translationValue?: TranslationValue) {
 }
 
 export function useTranslation(namespace?: string) {
-  const context = useIntlContext();
+  const {
+    message: allMessage,
+    locale,
+    formats: globalFormats,
+    onError,
+    getMessageFallback,
+  } = useIntlContext();
   const cachedFormatByLocaleRef = React.useRef<Record<string, Record<string, IntlMessageFormat>>>(
     {},
   );
-
-  const { message: allMessage, locale = 'not-locale' } = context;
 
   /**
    * @description 처음 전달받은 message로부터 namespace 내부의 값을 조회합니다.
@@ -88,24 +93,24 @@ export function useTranslation(namespace?: string) {
     } catch (_error) {
       const error = _error as SystemError;
       const intlError = new IntlError(IntlErrorCode.MISSING_MESSAGE, error.message);
-      context.onError(intlError);
+      onError(intlError);
 
       return intlError;
     }
-  }, [allMessage, context, namespace]);
+  }, [allMessage, onError, namespace]);
 
   return (key: string, value?: TranslationValue, format?: Partial<Formats>) => {
     const cachedFormatByLocale = cachedFormatByLocaleRef.current;
 
     if (messageOrError instanceof IntlError) {
-      return context.getMessageFallback({ error: messageOrError, key, namespace });
+      return getMessageFallback({ error: messageOrError, key, namespace });
     }
 
     function getFallbackFromError(code: IntlErrorCode, message?: string) {
       const error = new IntlError(code, message);
-      context.onError(error);
+      onError(error);
 
-      return context.getMessageFallback({ error, key, namespace });
+      return getMessageFallback({ error, key, namespace });
     }
 
     const intlMessage = messageOrError;
@@ -137,7 +142,11 @@ export function useTranslation(namespace?: string) {
 
       try {
         // IntlMessageFormat을 실행시키며, 실패시 INVALID_MESSAGE를 반환합니다.
-        messageFormat = new IntlMessageFormat(message, locale, format);
+        messageFormat = new IntlMessageFormat(
+          message,
+          locale,
+          convertFormatToIntlMessageFormat({ ...globalFormats, ...format }),
+        );
       } catch (_error) {
         const error = _error as SystemError;
         console.log('test:: error', error.toString());
