@@ -1,5 +1,12 @@
 # @lit-intl/core
 
+## 0.0.9
+
+### Patch Changes
+
+- dc17b40: Type safe translation message key
+- 5bf5573: Default translation value prop
+
 ## 0.0.8
 
 ### Patch Changes
