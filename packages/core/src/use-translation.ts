@@ -43,8 +43,8 @@ function resolvePath(messages: IntlMessage | undefined, idPath: string, namespac
 /**
  * @description format value로 함수가 들어갔을 때 React.Component의 형태로 변환합니다.
  */
-function prepareTranslationValues(translationValue?: RichTranslationValue) {
-  if (!translationValue) return translationValue;
+function prepareTranslationValues(translationValue: RichTranslationValue) {
+  if (Object.keys(translationValue).length === 0) return undefined;
   const transformedValues: RichTranslationValue = {};
 
   Object.keys(translationValue).forEach((key) => {
@@ -75,6 +75,7 @@ export function useTranslation(namespace?: string) {
     locale,
     formats: globalFormats,
     timeZone,
+    defaultTranslationValue,
     onError,
     getMessageFallback,
   } = useIntlContext();
@@ -185,7 +186,7 @@ export function useTranslation(namespace?: string) {
         const formattedMessage = messageFormat.format(
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore It's working fine, but formatJS can't get a type for richText and is throwing an error.
-          prepareTranslationValues(value),
+          prepareTranslationValues({ ...defaultTranslationValue, ...value }),
         );
 
         if (formattedMessage == null) {
@@ -244,5 +245,14 @@ export function useTranslation(namespace?: string) {
     };
 
     return translate;
-  }, [getMessageFallback, globalFormats, locale, messageOrError, namespace, onError, timeZone]);
+  }, [
+    defaultTranslationValue,
+    getMessageFallback,
+    globalFormats,
+    locale,
+    messageOrError,
+    namespace,
+    onError,
+    timeZone,
+  ]);
 }

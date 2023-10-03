@@ -451,3 +451,59 @@ describe('global formats', () => {
     screen.getByText('Friday, November 20, 2020');
   });
 });
+
+describe('default rich translation value', () => {
+  function renderRichTextMessageWithDefault(
+    message: string,
+    value?: TranslationValue,
+    format?: Partial<Format>,
+  ) {
+    function Component() {
+      const t = useTranslation();
+      return <>{t('message', value, format)}</>;
+    }
+
+    return render(
+      <IntlProvider locale="en" message={{ message }} defaultTranslationValue={{ value: 'VALUE!' }}>
+        <Component />
+      </IntlProvider>,
+    );
+  }
+
+  it('uses default rich text element', () => {
+    const { container } = renderRichTextMessageWithDefault('Hello {value}');
+    expect(container.innerHTML).toBe('Hello VALUE!');
+  });
+});
+
+describe('default rich translation value', () => {
+  function renderRichTextMessageWithDefault(
+    message: string,
+    value?: RichTranslationValue,
+    format?: Partial<Format>,
+  ) {
+    function Component() {
+      const t = useTranslation();
+      return <>{t.rich('message', value, format)}</>;
+    }
+
+    return render(
+      <IntlProvider
+        locale="en"
+        message={{ message }}
+        defaultTranslationValue={{
+          important: (children) => <b>{children}</b>,
+        }}
+      >
+        <Component />
+      </IntlProvider>,
+    );
+  }
+
+  it('uses default rich text element', () => {
+    const { container } = renderRichTextMessageWithDefault(
+      'This is <important>important</important> and <important>this as well</important>',
+    );
+    expect(container.innerHTML).toBe('This is <b>important</b> and <b>this as well</b>');
+  });
+});

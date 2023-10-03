@@ -12,7 +12,10 @@ function defaultGetMessageFallback({ key, namespace }: DefaultGetMessageFallback
 }
 
 type IntlProviderProps = React.PropsWithChildren<
-  Pick<IntlContextValue, 'message' | 'locale' | 'formats' | 'now' | 'timeZone'> &
+  Pick<
+    IntlContextValue,
+    'message' | 'locale' | 'formats' | 'now' | 'timeZone' | 'defaultTranslationValue'
+  > &
     Partial<Pick<IntlContextValue, 'onError' | 'getMessageFallback'>>
 >;
 
