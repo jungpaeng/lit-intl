@@ -5,7 +5,7 @@ import IntlError, { IntlErrorCode } from '../src/intl-error';
 import { IntlProvider } from '../src/intl.provider';
 import { type Format } from '../src/types/format';
 import { type IntlMessage } from '../src/types/intl-message';
-import { type TranslationValue } from '../src/types/translation';
+import { type RichTranslationValue, type TranslationValue } from '../src/types/translation';
 import { useTranslation } from '../src/use-translation';
 
 // Bypass import lint rule ...
@@ -217,7 +217,7 @@ it('renders the correct message when the namespace changes', () => {
 describe('t.rich', () => {
   function renderRichMessage(
     message: string | IntlMessage,
-    value?: TranslationValue,
+    value?: RichTranslationValue,
     format?: Partial<Format>,
   ) {
     function Component() {
@@ -351,7 +351,11 @@ describe('error handling', () => {
       return (
         <>
           {t('rich', {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             boldThis: (children: React.ReactNode) => <b>{children}</b>,
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             link: (children: React.ReactNode) => <i>{children}</i>,
             price: 10000,
             pct: 0.1,

@@ -5,7 +5,7 @@ import IntlMessageFormat, { type Formats } from 'intl-messageformat';
 import IntlError, { IntlErrorCode } from './intl-error';
 import { useIntlContext } from './intl.provider';
 import { type IntlMessage } from './types/intl-message';
-import { type TranslationValue } from './types/translation';
+import { type RichTranslationValue, type TranslationValue } from './types/translation';
 import { convertFormatToIntlMessageFormat } from './utils/convert-format-to-intl-message-format';
 
 /**
@@ -43,9 +43,9 @@ function resolvePath(messages: IntlMessage | undefined, idPath: string, namespac
 /**
  * @description format value로 함수가 들어갔을 때 React.Component의 형태로 변환합니다.
  */
-function prepareTranslationValues(translationValue?: TranslationValue) {
+function prepareTranslationValues(translationValue?: RichTranslationValue) {
   if (!translationValue) return translationValue;
-  const transformedValues: TranslationValue = {};
+  const transformedValues: RichTranslationValue = {};
 
   Object.keys(translationValue).forEach((key) => {
     let index = 0;
@@ -116,7 +116,7 @@ export function useTranslation(namespace?: string) {
       return getMessageFallback({ key, error, namespace });
     }
 
-    function translateBase(key: string, value?: TranslationValue, format?: Partial<Formats>) {
+    function translateBase(key: string, value?: RichTranslationValue, format?: Partial<Formats>) {
       const cachedFormatByLocale = cachedFormatByLocaleRef.current;
 
       if (messageOrError instanceof IntlError) {
