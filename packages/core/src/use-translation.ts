@@ -109,7 +109,11 @@ export function useTranslation(namespace?: string) {
   }, [allMessage, onError, namespace]);
 
   return React.useCallback(
-    (key: string, value?: TranslationValue, format?: Partial<Formats>) => {
+    (
+      key: string,
+      value?: TranslationValue & { __rawValue?: boolean },
+      format?: Partial<Formats>,
+    ) => {
       const cachedFormatByLocale = cachedFormatByLocaleRef.current;
 
       if (messageOrError instanceof IntlError) {
@@ -148,6 +152,10 @@ export function useTranslation(namespace?: string) {
               ? `Insufficient path specified for \`${key}\` in \`${namespace}\``
               : undefined,
           );
+        }
+
+        if (value?.__rawValue === true) {
+          return message;
         }
 
         try {

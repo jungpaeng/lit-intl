@@ -101,6 +101,23 @@ describe('use-translation', () => {
     screen.getByText("It's my cat's 1st birthday!");
   });
 
+  it('can return raw messages without processing them', () => {
+    function Component() {
+      const t = useTranslation();
+      return (
+        <span dangerouslySetInnerHTML={{ __html: String(t('message', { __rawValue: true })) }} />
+      );
+    }
+
+    const { container } = render(
+      <IntlProvider locale="en" message={{ message: '<a href="/test">Test</a><p>{hello}</p>' }}>
+        <Component />
+      </IntlProvider>,
+    );
+
+    expect(container.innerHTML).toBe('<span><a href="/test">Test</a><p>{hello}</p></span>');
+  });
+
   it('should be print rich text', () => {
     const { container } = renderMessage(
       'Our price is <boldThis>{price, number, ::currency/USD precision-integer}</boldThis> with <link>{pct, number, ::percent} discount</link>',
