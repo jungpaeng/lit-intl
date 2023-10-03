@@ -17,7 +17,7 @@ function renderMessage(message: string, values?: TranslationValue, format?: Part
   }
 
   return render(
-    <IntlProvider message={{ message }} locale="en">
+    <IntlProvider message={{ message }} locale="en" timeZone="Asia/Seoul">
       <Component />
     </IntlProvider>,
   );
@@ -59,6 +59,15 @@ describe('use-translation', () => {
 
   it('should be print time format', () => {
     renderMessage('Coupon expires at {expires, time, short}', { expires: new Date('2023-10-01') });
+    screen.getByText('Coupon expires at 9:00 AM');
+  });
+
+  it('should be print time with timezone', () => {
+    renderMessage(
+      'Coupon expires at {expires, time, time}',
+      { expires: new Date('2023-10-01') },
+      { dateTime: { time: { hour: 'numeric', minute: '2-digit' } } },
+    );
     screen.getByText('Coupon expires at 9:00 AM');
   });
 

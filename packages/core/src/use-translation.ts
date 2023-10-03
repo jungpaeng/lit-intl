@@ -74,6 +74,7 @@ export function useTranslation(namespace?: string) {
     message: allMessage,
     locale,
     formats: globalFormats,
+    timeZone,
     onError,
     getMessageFallback,
   } = useIntlContext();
@@ -154,7 +155,7 @@ export function useTranslation(namespace?: string) {
           messageFormat = new IntlMessageFormat(
             message,
             locale,
-            convertFormatToIntlMessageFormat({ ...globalFormats, ...format }),
+            convertFormatToIntlMessageFormat({ ...globalFormats, ...format }, timeZone),
           );
         } catch (_error) {
           const error = _error as SystemError;
@@ -192,6 +193,6 @@ export function useTranslation(namespace?: string) {
         return getFallbackFromError(IntlErrorCode.FORMATTING_ERROR, error.message);
       }
     },
-    [getMessageFallback, globalFormats, locale, messageOrError, namespace, onError],
+    [getMessageFallback, globalFormats, locale, messageOrError, namespace, onError, timeZone],
   );
 }
