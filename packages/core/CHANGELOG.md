@@ -1,5 +1,15 @@
 # @lit-intl/core
 
+## 0.0.7
+
+### Patch Changes
+
+- 81ff242: Update translation function
+
+  - feat: time format with timezone
+  - feat: translation raw function
+  - feat: translation rich function
+
 ## 0.0.6
 
 ### Patch Changes
