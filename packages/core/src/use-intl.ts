@@ -1,6 +1,6 @@
 import { type NumberFormatOptions } from '@formatjs/ecma402-abstract';
 
-import IntlError, { IntlErrorCode, type SystemError } from './intl-error';
+import IntlError, { IntlErrorCode } from './intl-error';
 import { useIntlContext } from './intl.provider';
 
 const MINUTE = 60;
@@ -85,7 +85,7 @@ export function useIntl() {
     try {
       return formatter(format);
     } catch (_error) {
-      const error = _error as SystemError;
+      const error = _error as Error;
       onError(new IntlError(IntlErrorCode.FORMATTING_ERROR, error.message));
 
       return String(value);
@@ -142,7 +142,7 @@ export function useIntl() {
 
       return new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(value, unit);
     } catch (_error) {
-      const error = _error as SystemError;
+      const error = _error as Error;
       onError(new IntlError(IntlErrorCode.FORMATTING_ERROR, error.message));
 
       return String(date);

@@ -2,7 +2,7 @@ import React from 'react';
 
 import IntlMessageFormat, { type Formats } from 'intl-messageformat';
 
-import IntlError, { IntlErrorCode, type SystemError } from './intl-error';
+import IntlError, { IntlErrorCode } from './intl-error';
 import { useIntlContext } from './intl.provider';
 import { type IntlMessage } from './types/intl-message';
 import { type TranslationValue } from './types/translation';
@@ -100,7 +100,7 @@ export function useTranslation(namespace?: string) {
 
       return retrievedMessages;
     } catch (_error) {
-      const error = _error as SystemError;
+      const error = _error as Error;
       const intlError = new IntlError(IntlErrorCode.MISSING_MESSAGE, error.message);
       onError(intlError);
 
@@ -138,7 +138,7 @@ export function useTranslation(namespace?: string) {
           // key 값에 대응하는 value(message)를 조회합니다.
           message = resolvePath(intlMessage, key, namespace);
         } catch (_error) {
-          const error = _error as SystemError;
+          const error = _error as Error;
           return getMessageFallbackFromError(key, IntlErrorCode.MISSING_MESSAGE, error.message);
         }
 
@@ -163,7 +163,7 @@ export function useTranslation(namespace?: string) {
             convertFormatToIntlMessageFormat({ ...globalFormats, ...format }, timeZone),
           );
         } catch (_error) {
-          const error = _error as SystemError;
+          const error = _error as Error;
           return getMessageFallbackFromError(key, IntlErrorCode.INVALID_MESSAGE, error.message);
         }
 
@@ -196,7 +196,7 @@ export function useTranslation(namespace?: string) {
           ? formattedMessage
           : String(formattedMessage);
       } catch (_error) {
-        const error = _error as SystemError;
+        const error = _error as Error;
         return getMessageFallbackFromError(key, IntlErrorCode.FORMATTING_ERROR, error.message);
       }
     }
@@ -230,7 +230,7 @@ export function useTranslation(namespace?: string) {
       try {
         return resolvePath(intlMessage, key, namespace);
       } catch (_error) {
-        const error = _error as SystemError;
+        const error = _error as Error;
         return getMessageFallbackFromError(key, IntlErrorCode.MISSING_MESSAGE, error.message);
       }
     };

@@ -1,8 +1,3 @@
-export type SystemError = {
-  code: string;
-  message: string;
-};
-
 export const enum IntlErrorCode {
   MISSING_MESSAGE = 'MISSING_MESSAGE',
   MISSING_FORMAT = 'MISSING_FORMAT',
