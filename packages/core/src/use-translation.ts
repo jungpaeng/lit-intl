@@ -1,6 +1,6 @@
 import IntlError, { IntlErrorCode } from './intl-error';
 import { useIntlContext } from './intl.provider';
-import { type RichTranslationValue, type TranslationValue, type Format } from './types';
+import { type RichTranslationValue, type Format, type TranslationValue } from './types';
 import { useTranslationImpl } from './use-translationImpl';
 import { type MessageKey } from './utils/message-key';
 import { type NamespaceKey } from './utils/namespace-key';
@@ -15,43 +15,23 @@ export function useTranslation<
   // default translate function return type
   <
     TargetKey extends MessageKey<
-      NestedValueOf<
-        { '!': IntlMessage },
-        NamespaceKey<IntlMessage, NestedKeyOf<IntlMessage>> extends NestedKey
-          ? '!'
-          : `!.${NestedKey}`
-      >,
+      NestedValueOf<{ '!': IntlMessage }, [NestedKey] extends [never] ? '!' : `!.${NestedKey}`>,
       NestedKeyOf<
-        NestedValueOf<
-          { '!': IntlMessage },
-          NamespaceKey<IntlMessage, NestedKeyOf<IntlMessage>> extends NestedKey
-            ? '!'
-            : `!.${NestedKey}`
-        >
+        NestedValueOf<{ '!': IntlMessage }, [NestedKey] extends [never] ? '!' : `!.${NestedKey}`>
       >
     >,
   >(
     key: TargetKey,
-    value?: TranslationValue,
-    format?: Partial<Format>,
+    values?: TranslationValue,
+    formats?: Partial<Format>,
   ): string;
 
   // translate.rich function return type
   rich<
     TargetKey extends MessageKey<
-      NestedValueOf<
-        { '!': IntlMessage },
-        NamespaceKey<IntlMessage, NestedKeyOf<IntlMessage>> extends NestedKey
-          ? '!'
-          : `!.${NestedKey}`
-      >,
+      NestedValueOf<{ '!': IntlMessage }, [NestedKey] extends [never] ? '!' : `!.${NestedKey}`>,
       NestedKeyOf<
-        NestedValueOf<
-          { '!': IntlMessage },
-          NamespaceKey<IntlMessage, NestedKeyOf<IntlMessage>> extends NestedKey
-            ? '!'
-            : `!.${NestedKey}`
-        >
+        NestedValueOf<{ '!': IntlMessage }, [NestedKey] extends [never] ? '!' : `!.${NestedKey}`>
       >
     >,
   >(
@@ -63,19 +43,9 @@ export function useTranslation<
   // translate.raw function return type
   raw<
     TargetKey extends MessageKey<
-      NestedValueOf<
-        { '!': IntlMessage },
-        NamespaceKey<IntlMessage, NestedKeyOf<IntlMessage>> extends NestedKey
-          ? '!'
-          : `!.${NestedKey}`
-      >,
+      NestedValueOf<{ '!': IntlMessage }, [NestedKey] extends [never] ? '!' : `!.${NestedKey}`>,
       NestedKeyOf<
-        NestedValueOf<
-          { '!': IntlMessage },
-          NamespaceKey<IntlMessage, NestedKeyOf<IntlMessage>> extends NestedKey
-            ? '!'
-            : `!.${NestedKey}`
-        >
+        NestedValueOf<{ '!': IntlMessage }, [NestedKey] extends [never] ? '!' : `!.${NestedKey}`>
       >
     >,
   >(
@@ -100,7 +70,7 @@ export function useTranslation<
 
   return useTranslationImpl<
     { '!': IntlMessage },
-    NamespaceKey<IntlMessage, NestedKeyOf<IntlMessage>> extends NestedKey ? '!' : `!.${NestedKey}`
+    [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
   >(
     { '!': message },
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
