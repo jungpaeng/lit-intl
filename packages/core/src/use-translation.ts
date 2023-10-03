@@ -88,6 +88,14 @@ export function useTranslation(namespace?: string) {
    */
   const messageOrError = React.useMemo(() => {
     try {
+      if (allMessage == null) {
+        throw new Error(
+          process.env.NODE_ENV !== 'production'
+            ? `No messages were configured on the provider.`
+            : undefined,
+        );
+      }
+
       const retrievedMessages = namespace ? resolvePath(allMessage, namespace) : allMessage;
 
       if (retrievedMessages == null) {
