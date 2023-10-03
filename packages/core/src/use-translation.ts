@@ -109,14 +109,14 @@ export function useTranslation(namespace?: string) {
   }, [allMessage, onError, namespace]);
 
   return React.useMemo(() => {
-    function getFallbackFromError(key: string, code: IntlErrorCode, message?: string) {
+    function getMessageFallbackFromError(key: string, code: IntlErrorCode, message?: string) {
       const error = new IntlError(code, message);
       onError(error);
 
       return getMessageFallback({ key, error, namespace });
     }
 
-    function translateFn(key: string, value?: TranslationValue, format?: Partial<Formats>) {
+    function translateBase(key: string, value?: TranslationValue, format?: Partial<Formats>) {
       const cachedFormatByLocale = cachedFormatByLocaleRef.current;
 
       if (messageOrError instanceof IntlError) {
@@ -137,16 +137,18 @@ export function useTranslation(namespace?: string) {
           message = resolvePath(intlMessage, key, namespace);
         } catch (_error) {
           const error = _error as SystemError;
-          return getFallbackFromError(key, IntlErrorCode.MISSING_MESSAGE, error.message);
+          return getMessageFallbackFromError(key, IntlErrorCode.MISSING_MESSAGE, error.message);
         }
 
         // 조회된 message는 object 타입일 수 없습니다.
         if (typeof message == 'object') {
-          return getFallbackFromError(
+          return getMessageFallbackFromError(
             key,
             IntlErrorCode.INSUFFICIENT_PATH,
             process.env.NODE_ENV !== 'production'
-              ? `Insufficient path specified for \`${key}\` in \`${namespace}\``
+              ? `Insufficient path specified for \`${key}\` in \`${
+                  namespace ? `namespace \`${namespace}\`` : 'message'
+                }\``
               : undefined,
           );
         }
@@ -160,7 +162,7 @@ export function useTranslation(namespace?: string) {
           );
         } catch (_error) {
           const error = _error as SystemError;
-          return getFallbackFromError(key, IntlErrorCode.INVALID_MESSAGE, error.message);
+          return getMessageFallbackFromError(key, IntlErrorCode.INVALID_MESSAGE, error.message);
         }
 
         if (!cachedFormatByLocale[locale]) {
@@ -179,7 +181,9 @@ export function useTranslation(namespace?: string) {
         if (formattedMessage == null) {
           throw new Error(
             process.env.NODE_ENV !== 'production'
-              ? `Unable to format ${[namespace, key].join('.')}`
+              ? `Unable to format \`${key}\` in ${
+                  namespace ? `namespace \`${namespace}\`` : 'message'
+                }`
               : undefined,
           );
         }
@@ -191,11 +195,31 @@ export function useTranslation(namespace?: string) {
           : String(formattedMessage);
       } catch (_error) {
         const error = _error as SystemError;
-        return getFallbackFromError(key, IntlErrorCode.FORMATTING_ERROR, error.message);
+        return getMessageFallbackFromError(key, IntlErrorCode.FORMATTING_ERROR, error.message);
       }
     }
 
-    translateFn.raw = function (key: string) {
+    function translate(key: string, value?: TranslationValue, format?: Partial<Formats>) {
+      const message = translateBase(key, value, format);
+
+      if (typeof message !== 'string') {
+        return getMessageFallbackFromError(
+          key,
+          IntlErrorCode.INVALID_MESSAGE,
+          process.env.NODE_ENV !== 'production'
+            ? `The message \`${key}\` in ${
+                namespace ? `namespace \`${namespace}\`` : 'message'
+              } didn't resolve to a string. If you want to format rich text, use \`t.rich\` instead.`
+            : undefined,
+        );
+      }
+
+      return message;
+    }
+
+    translate.rich = translateBase;
+
+    translate.raw = function (key: string) {
       if (messageOrError instanceof IntlError) {
         return getMessageFallback({ error: messageOrError, key, namespace });
       }
@@ -205,10 +229,10 @@ export function useTranslation(namespace?: string) {
         return resolvePath(intlMessage, key, namespace);
       } catch (_error) {
         const error = _error as SystemError;
-        return getFallbackFromError(key, IntlErrorCode.MISSING_MESSAGE, error.message);
+        return getMessageFallbackFromError(key, IntlErrorCode.MISSING_MESSAGE, error.message);
       }
     };
 
-    return translateFn;
+    return translate;
   }, [getMessageFallback, globalFormats, locale, messageOrError, namespace, onError, timeZone]);
 }

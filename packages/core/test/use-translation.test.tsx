@@ -101,20 +101,6 @@ describe('use-translation', () => {
     );
     screen.getByText("It's my cat's 1st birthday!");
   });
-
-  it('should be print rich text', () => {
-    const { container } = renderMessage(
-      'Our price is <boldThis>{price, number, ::currency/USD precision-integer}</boldThis> with <link>{pct, number, ::percent} discount</link>',
-      {
-        boldThis: (children: React.ReactNode) => <b>{children}</b>,
-        link: (children: React.ReactNode) => <i>{children}</i>,
-        price: 10000,
-        pct: 0.1,
-      },
-    );
-
-    expect(container.innerHTML).toBe('Our price is <b>$10,000</b> with <i>10% discount</i>');
-  });
 });
 
 it('has a stable reference', () => {
@@ -182,7 +168,7 @@ describe('t.raw', () => {
     expect(container.innerHTML).toBe('<span>A.AA</span>');
   });
 
-  it('can return object', () => {
+  it("returns an error when looking up a key that doesn't exist", () => {
     const onError = vi.fn();
 
     function Component() {
@@ -198,6 +184,38 @@ describe('t.raw', () => {
 
     expect(onError).toHaveBeenCalled();
     screen.getByText('IntlError in bar');
+  });
+});
+
+describe('t.rich', () => {
+  function renderRichMessage(
+    message: string | IntlMessage,
+    value?: TranslationValue,
+    format?: Partial<Format>,
+  ) {
+    function Component() {
+      const t = useTranslation();
+      return <>{t.rich('message', value, format)}</>;
+    }
+
+    return render(
+      <IntlProvider message={{ message }} locale="en">
+        <Component />
+      </IntlProvider>,
+    );
+  }
+  it('should be print rich text', () => {
+    const { container } = renderRichMessage(
+      'Our price is <boldThis>{price, number, ::currency/USD precision-integer}</boldThis> with <link>{pct, number, ::percent} discount</link>',
+      {
+        boldThis: (children: React.ReactNode) => <b>{children}</b>,
+        link: (children: React.ReactNode) => <i>{children}</i>,
+        price: 10000,
+        pct: 0.1,
+      },
+    );
+
+    expect(container.innerHTML).toBe('Our price is <b>$10,000</b> with <i>10% discount</i>');
   });
 });
 
@@ -297,6 +315,41 @@ describe('error handling', () => {
     );
     expect(error.code).toBe(IntlErrorCode.FORMATTING_ERROR);
     screen.getByText('IntlError in price');
+  });
+
+  it('handles rich text from translation function', () => {
+    const onError = vi.fn();
+    function Component() {
+      const t = useTranslation();
+      return (
+        <>
+          {t('rich', {
+            boldThis: (children: React.ReactNode) => <b>{children}</b>,
+            link: (children: React.ReactNode) => <i>{children}</i>,
+            price: 10000,
+            pct: 0.1,
+          })}
+        </>
+      );
+    }
+
+    render(
+      <IntlProvider
+        locale="en"
+        message={{
+          rich: 'Our price is <boldThis>{price, number, ::currency/USD precision-integer}</boldThis> with <link>{pct, number, ::percent} discount</link>',
+        }}
+        onError={onError}
+      >
+        <Component />
+      </IntlProvider>,
+    );
+    const error: IntlError = onError.mock.calls[0][0];
+    expect(error.code).toBe(IntlErrorCode.INVALID_MESSAGE);
+    expect(error.message).toBe(
+      "INVALID_MESSAGE: The message `rich` in message didn't resolve to a string. If you want to format rich text, use `t.rich` instead.",
+    );
+    screen.getByText('IntlError in rich');
   });
 });
 
