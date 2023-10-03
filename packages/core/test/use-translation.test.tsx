@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import IntlError, { IntlErrorCode } from '../src/intl-error';
 import { IntlProvider } from '../src/intl.provider';
 import { type Format } from '../src/types/format';
+import { type IntlMessage } from '../src/types/intl-message';
 import { type TranslationValue } from '../src/types/translation';
 import { useTranslation } from '../src/use-translation';
 
@@ -101,23 +102,6 @@ describe('use-translation', () => {
     screen.getByText("It's my cat's 1st birthday!");
   });
 
-  it('can return raw messages without processing them', () => {
-    function Component() {
-      const t = useTranslation();
-      return (
-        <span dangerouslySetInnerHTML={{ __html: String(t('message', { __rawValue: true })) }} />
-      );
-    }
-
-    const { container } = render(
-      <IntlProvider locale="en" message={{ message: '<a href="/test">Test</a><p>{hello}</p>' }}>
-        <Component />
-      </IntlProvider>,
-    );
-
-    expect(container.innerHTML).toBe('<span><a href="/test">Test</a><p>{hello}</p></span>');
-  });
-
   it('should be print rich text', () => {
     const { container } = renderMessage(
       'Our price is <boldThis>{price, number, ::currency/USD precision-integer}</boldThis> with <link>{pct, number, ::percent} discount</link>',
@@ -163,6 +147,58 @@ it('has a stable reference', () => {
     </IntlProvider>,
   );
   screen.getByText('2');
+});
+
+describe('t.raw', () => {
+  function renderRawMessage<Message extends string | IntlMessage>(
+    message: Message,
+    callback: (message: Message) => React.ReactNode,
+  ) {
+    function Component() {
+      const t = useTranslation();
+      return <>{callback(t.raw('message') as Message)}</>;
+    }
+
+    return render(
+      <IntlProvider message={{ message }} locale="en">
+        <Component />
+      </IntlProvider>,
+    );
+  }
+
+  it('can return raw messages without processing them', () => {
+    const { container } = renderRawMessage('<a href="/test">Test</a><p>{hello}</p>', (message) => (
+      <span dangerouslySetInnerHTML={{ __html: message }} />
+    ));
+
+    expect(container.innerHTML).toBe('<span><a href="/test">Test</a><p>{hello}</p></span>');
+  });
+
+  it('can return object', () => {
+    const { container } = renderRawMessage({ A: { AA: 'A.AA' } }, (message) => (
+      <span>{message.A.AA}</span>
+    ));
+
+    expect(container.innerHTML).toBe('<span>A.AA</span>');
+  });
+
+  it('can return object', () => {
+    const onError = vi.fn();
+
+    function Component() {
+      const t = useTranslation();
+      return <>{t.raw('bar')}</>;
+    }
+
+    render(
+      <IntlProvider message={{ foo: 'foo' }} locale="en" onError={onError}>
+        <Component />
+      </IntlProvider>,
+    );
+
+    expect(onError).toHaveBeenCalled();
+    screen.getByText('IntlError in bar');
+  });
 });
 
 describe('error handling', () => {
