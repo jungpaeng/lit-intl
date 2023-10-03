@@ -1,5 +1,11 @@
 # @lit-intl/core
 
+## 0.0.10
+
+### Patch Changes
+
+- efe6e10: Default nestedKey to never
+
 ## 0.0.9
 
 ### Patch Changes
