@@ -1,12 +1,10 @@
 import React from 'react';
 
 import type IntlError from './intl-error';
-import { type Format } from './types/format';
-import { type IntlMessage } from './types/intl-message';
-import { type RichTranslationValue } from './types/translation';
+import { type AbstractIntlMessage, type Format, type RichTranslationValue } from './types';
 
 export type IntlContextValue = {
-  message?: IntlMessage;
+  message?: AbstractIntlMessage;
   locale: string;
   now?: Date;
   timeZone?: string;

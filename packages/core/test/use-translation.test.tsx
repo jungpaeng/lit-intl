@@ -4,7 +4,6 @@ import { describe, expect, it, vi } from 'vitest';
 import IntlError, { IntlErrorCode } from '../src/intl-error';
 import { IntlProvider } from '../src/intl.provider';
 import { type Format } from '../src/types/format';
-import { type IntlMessage } from '../src/types/intl-message';
 import { type RichTranslationValue, type TranslationValue } from '../src/types/translation';
 import { useTranslation } from '../src/use-translation';
 
@@ -247,24 +246,29 @@ describe('t.rich', () => {
 });
 
 describe('error handling', () => {
-  it('warns when no messages are configured', () => {
+  it('throw when no messages are configured', () => {
     const onError = vi.fn();
+    const originalConsoleError = console.error;
+    console.error = vi.fn();
 
     function Component() {
       const t = useTranslation('Component');
       return <>{t('label')}</>;
     }
 
-    render(
-      <IntlProvider locale="en" onError={onError}>
-        <Component />
-      </IntlProvider>,
-    );
+    expect(() =>
+      render(
+        <IntlProvider locale="en" onError={onError}>
+          <Component />
+        </IntlProvider>,
+      ),
+    ).toThrow('MISSING_MESSAGE: No messages were configured on the provider.');
 
     const error: IntlError = onError.mock.calls[0][0];
     expect(error.message).toBe('MISSING_MESSAGE: No messages were configured on the provider.');
     expect(error.code).toBe(IntlErrorCode.MISSING_MESSAGE);
-    screen.getByText('IntlError in Component.label');
+
+    console.error = originalConsoleError;
   });
 
   it('allows to configure a fallback', () => {

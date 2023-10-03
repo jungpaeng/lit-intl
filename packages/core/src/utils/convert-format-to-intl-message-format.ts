@@ -1,6 +1,6 @@
 import { type Formats as IntlFormat } from 'intl-messageformat';
 
-import { type Format } from '../types/format';
+import { type Format } from '../types';
 
 export function convertFormatToIntlMessageFormat(
   format: Partial<Format>,
