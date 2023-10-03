@@ -1,5 +1,15 @@
 # @lit-intl/core
 
+## 0.0.8
+
+### Patch Changes
+
+- 8c180ca: RichTranslationValue type
+- 1067a4e: Serialize useTransition key
+- bb9afe6: Remove SystemError type
+- fda5b38: Add `useLocale` and `useTimeZone`
+- 5933805: Error message when no messages are provider at using useTranslation.
+
 ## 0.0.7
 
 ### Patch Changes
