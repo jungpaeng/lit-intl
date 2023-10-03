@@ -126,9 +126,11 @@ export function useTranslation(namespace?: string) {
       const intlMessage = messageOrError;
       let messageFormat: IntlMessageFormat;
 
-      if (cachedFormatByLocale[locale]?.[key] != null) {
+      const cacheKey = [namespace, key].filter((item) => item != null).join('.');
+
+      if (cachedFormatByLocale[locale]?.[cacheKey] != null) {
         // 캐시되어있다면 해당 messageFormat 메시지를 반환합니다.
-        messageFormat = cachedFormatByLocale[locale][key];
+        messageFormat = cachedFormatByLocale[locale][cacheKey];
       } else {
         let message;
 
@@ -168,7 +170,7 @@ export function useTranslation(namespace?: string) {
         if (!cachedFormatByLocale[locale]) {
           cachedFormatByLocale[locale] = {};
         }
-        cachedFormatByLocale[locale][key] = messageFormat;
+        cachedFormatByLocale[locale][cacheKey] = messageFormat;
       }
 
       try {

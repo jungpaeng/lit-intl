@@ -187,6 +187,33 @@ describe('t.raw', () => {
   });
 });
 
+it('renders the correct message when the namespace changes', () => {
+  function Component({ namespace }: { namespace: string }): JSX.Element {
+    const t = useTranslation(namespace);
+
+    return <span>{t('title')}</span>;
+  }
+
+  const messages = {
+    namespaceA: { title: 'This is namespace A' },
+    namespaceB: { title: 'This is namespace B' },
+  };
+
+  const { rerender } = render(
+    <IntlProvider locale="en" message={messages}>
+      <Component namespace="namespaceA" />
+    </IntlProvider>,
+  );
+  screen.getByText('This is namespace A');
+
+  rerender(
+    <IntlProvider locale="en" message={messages}>
+      <Component namespace="namespaceB" />
+    </IntlProvider>,
+  );
+  screen.getByText('This is namespace B');
+});
+
 describe('t.rich', () => {
   function renderRichMessage(
     message: string | IntlMessage,
