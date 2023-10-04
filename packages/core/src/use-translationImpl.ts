@@ -92,6 +92,8 @@ export function useTranslationImpl<
     getMessageFallback,
   } = useIntlContext();
   allMessage = allMessage[namespacePrefix] as Message;
+  const [prevAllMessage, setPrevAllMessage] = React.useState(allMessage);
+
   namespace = (
     namespace === namespacePrefix ? undefined : namespace.slice((namespacePrefix + '.').length)
   ) as NestedKey;
@@ -99,6 +101,11 @@ export function useTranslationImpl<
   const cachedFormatByLocaleRef = React.useRef<Record<string, Record<string, IntlMessageFormat>>>(
     {},
   );
+
+  if (allMessage !== prevAllMessage) {
+    setPrevAllMessage(allMessage);
+    cachedFormatByLocaleRef.current = {};
+  }
 
   /**
    * @description 처음 전달받은 message로부터 namespace 내부의 값을 조회합니다.
@@ -159,7 +166,6 @@ export function useTranslationImpl<
       const cacheKey = [namespace, key].filter((item) => item != null).join('.');
 
       if (cachedFormatByLocale[locale]?.[cacheKey] != null) {
-        // 캐시되어있다면 해당 messageFormat 메시지를 반환합니다.
         messageFormat = cachedFormatByLocale[locale][cacheKey];
       } else {
         let message;
