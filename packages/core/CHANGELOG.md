@@ -1,5 +1,11 @@
 # @lit-intl/core
 
+## 0.0.11
+
+### Patch Changes
+
+- 579d8aa: Reset caching when messages change
+
 ## 0.0.10
 
 ### Patch Changes
