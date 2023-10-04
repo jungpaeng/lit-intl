@@ -744,7 +744,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@lit-intl/core", "workspace:packages/core"],\
             ["@formatjs/ecma402-abstract", "npm:1.17.2"],\
+            ["@testing-library/dom", "npm:9.3.3"],\
             ["@testing-library/react", "virtual:2cfb48767f1c50dbf748d0337b42d4c8c9a457f4cec509d80ae7b8b82b6ee1bc07a8585b354f61fc908a906c429f32f0018c4b03a66d82aec3e34f8d4024d091#npm:14.0.0"],\
+            ["@testing-library/user-event", "virtual:2cfb48767f1c50dbf748d0337b42d4c8c9a457f4cec509d80ae7b8b82b6ee1bc07a8585b354f61fc908a906c429f32f0018c4b03a66d82aec3e34f8d4024d091#npm:14.5.1"],\
             ["@types/node", "npm:20.8.0"],\
             ["@types/react", "npm:18.2.23"],\
             ["esbuild", "npm:0.19.4"],\
@@ -901,6 +903,28 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             "@types/react",\
             "react-dom",\
             "react"\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["@testing-library/user-event", [\
+        ["npm:14.5.1", {\
+          "packageLocation": "./.yarn/cache/@testing-library-user-event-npm-14.5.1-daca21fbcb-3e6bc9fd53.zip/node_modules/@testing-library/user-event/",\
+          "packageDependencies": [\
+            ["@testing-library/user-event", "npm:14.5.1"]\
+          ],\
+          "linkType": "SOFT"\
+        }],\
+        ["virtual:2cfb48767f1c50dbf748d0337b42d4c8c9a457f4cec509d80ae7b8b82b6ee1bc07a8585b354f61fc908a906c429f32f0018c4b03a66d82aec3e34f8d4024d091#npm:14.5.1", {\
+          "packageLocation": "./.yarn/__virtual__/@testing-library-user-event-virtual-c2cd2d9785/0/cache/@testing-library-user-event-npm-14.5.1-daca21fbcb-3e6bc9fd53.zip/node_modules/@testing-library/user-event/",\
+          "packageDependencies": [\
+            ["@testing-library/user-event", "virtual:2cfb48767f1c50dbf748d0337b42d4c8c9a457f4cec509d80ae7b8b82b6ee1bc07a8585b354f61fc908a906c429f32f0018c4b03a66d82aec3e34f8d4024d091#npm:14.5.1"],\
+            ["@testing-library/dom", "npm:9.3.3"],\
+            ["@types/testing-library__dom", null]\
+          ],\
+          "packagePeers": [\
+            "@testing-library/dom",\
+            "@types/testing-library__dom"\
           ],\
           "linkType": "HARD"\
         }]\
